@@ -72,7 +72,6 @@
 		3F0543EC1C56F71500AA5322 /* realm_coordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F0543EA1C56F71500AA5322 /* realm_coordinator.cpp */; };
 		3F0543ED1C56F71900AA5322 /* realm_coordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F0543EA1C56F71500AA5322 /* realm_coordinator.cpp */; };
 		3F0543F81C56F78300AA5322 /* external_commit_helper.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 3F0543F61C56F78300AA5322 /* external_commit_helper.hpp */; };
-		3F13FA701D343DE100201E9B /* PerformanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F04EA2D1992BEE400C2CE2E /* PerformanceTests.m */; };
 		3F1F47821B9612B300CD99A3 /* KVOTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F0F029D1B6FFE610046A4D5 /* KVOTests.mm */; };
 		3F1F47831B9656B900CD99A3 /* KVOTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F0F029D1B6FFE610046A4D5 /* KVOTests.mm */; };
 		3F2E66641CA0BA11004761D5 /* NotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E66611CA0B9D5004761D5 /* NotificationTests.m */; };
@@ -1990,7 +1989,6 @@
 				E81A1FE11955FE0100FDED82 /* ObjectInterfaceTests.m in Sources */,
 				021A88361AAFB5CD00EEAC84 /* ObjectSchemaTests.m in Sources */,
 				E81A1FE31955FE0100FDED82 /* ObjectTests.m in Sources */,
-				3F13FA701D343DE100201E9B /* PerformanceTests.m in Sources */,
 				02AFB4631A80343600E11938 /* PropertyTests.m in Sources */,
 				E81A1FE51955FE0100FDED82 /* PropertyTypeTest.mm in Sources */,
 				E81A1FE71955FE0100FDED82 /* QueryTests.m in Sources */,
@@ -2001,7 +1999,6 @@
 				3FDCFEB619F6A8D3005E414A /* RLMSupport.swift in Sources */,
 				E81A1FEE1955FE0100FDED82 /* RLMTestCase.m in Sources */,
 				297FBEFB1C19F696009D1118 /* RLMTestCaseUtils.swift in Sources */,
-				3F13FA701D343DE100201E9B /* PerformanceTests.m in Sources */,
 				028481EF19CD032C0097A416 /* RLMTestObjects.m in Sources */,
 				0207AB89195DFA15007EFB12 /* SchemaTests.mm in Sources */,
 				3FB4FA1819F5D2740020D53B /* SwiftArrayPropertyTests.swift in Sources */,
