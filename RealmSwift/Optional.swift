@@ -19,7 +19,9 @@
 import Realm
 
 /// A protocol describing types that can parameterize a `RealmOptional`.
-public protocol RealmOptionalType {}
+public protocol RealmOptionalType {
+    static func propType() -> PropertyType
+}
 extension Int: RealmOptionalType {}
 extension Int8: RealmOptionalType {}
 extension Int16: RealmOptionalType {}
@@ -29,13 +31,18 @@ extension Float: RealmOptionalType {}
 extension Double: RealmOptionalType {}
 extension Bool: RealmOptionalType {}
 
+
+@objc internal protocol HasPropertyType: class {
+    var propType: PropertyType { get }
+}
+
 /**
  A `RealmOptional` instance represents an optional value for types that can't be directly declared as `dynamic` in Swift,
  such as `Int`, `Float`, `Double`, and `Bool`.
 
  To change the underlying value stored by a `RealmOptional` instance, mutate the instance's `value` property.
  */
-public final class RealmOptional<T: RealmOptionalType>: RLMOptionalBase {
+public final class RealmOptional<T: RealmOptionalType>: RLMOptionalBase, HasPropertyType {
     /// The value the optional represents.
     public var value: T? {
         get {
@@ -55,4 +62,9 @@ public final class RealmOptional<T: RealmOptionalType>: RLMOptionalBase {
         super.init()
         self.value = value
     }
+
+    internal var propType: PropertyType {
+        return T.propType()
+    }
+
 }

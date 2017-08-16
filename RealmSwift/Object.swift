@@ -427,7 +427,9 @@ public class ObjectUtil: NSObject {
             let mirror = Mirror(reflecting: prop.value)
             let type = mirror.subjectType
             var properties = properties
-            if type is Optional<String>.Type || type is Optional<NSString>.Type {
+            if let hasProp = prop.value as? HasPropertyType { // this works for all RealmOptional & RealmCustom
+                properties[name] = NSNumber(value: hasProp.propType.rawValue)
+            } else if type is Optional<String>.Type || type is Optional<NSString>.Type {
                 properties[name] = NSNumber(value: PropertyType.string.rawValue)
             } else if type is Optional<Date>.Type {
                 properties[name] = NSNumber(value: PropertyType.date.rawValue)
@@ -435,18 +437,18 @@ public class ObjectUtil: NSObject {
                 properties[name] = NSNumber(value: PropertyType.data.rawValue)
             } else if type is Optional<Object>.Type {
                 properties[name] = NSNumber(value: PropertyType.object.rawValue)
-            } else if type is RealmOptional<Int>.Type ||
-                      type is RealmOptional<Int8>.Type ||
-                      type is RealmOptional<Int16>.Type ||
-                      type is RealmOptional<Int32>.Type ||
-                      type is RealmOptional<Int64>.Type {
-                properties[name] = NSNumber(value: PropertyType.int.rawValue)
-            } else if type is RealmOptional<Float>.Type {
-                properties[name] = NSNumber(value: PropertyType.float.rawValue)
-            } else if type is RealmOptional<Double>.Type {
-                properties[name] = NSNumber(value: PropertyType.double.rawValue)
-            } else if type is RealmOptional<Bool>.Type {
-                properties[name] = NSNumber(value: PropertyType.bool.rawValue)
+//            } else if type is RealmOptional<Int>.Type ||
+//                      type is RealmOptional<Int8>.Type ||
+//                      type is RealmOptional<Int16>.Type ||
+//                      type is RealmOptional<Int32>.Type ||
+//                      type is RealmOptional<Int64>.Type {
+//                properties[name] = NSNumber(value: PropertyType.int.rawValue)
+//            } else if type is RealmOptional<Float>.Type {
+//                properties[name] = NSNumber(value: PropertyType.float.rawValue)
+//            } else if type is RealmOptional<Double>.Type {
+//                properties[name] = NSNumber(value: PropertyType.double.rawValue)
+//            } else if type is RealmOptional<Bool>.Type {
+//                properties[name] = NSNumber(value: PropertyType.bool.rawValue)
             } else if prop.value as? RLMOptionalBase != nil {
                 throwRealmException("'\(type)' is not a valid RealmOptional type.")
             } else if mirror.displayStyle == .optional || type is ExpressibleByNilLiteral.Type {
