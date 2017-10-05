@@ -22,6 +22,13 @@ import Realm
 public protocol RealmOptionalType {
     static func propType() -> PropertyType
 }
+
+public extension RealmOptionalType {
+    /// :nodoc:
+    public static func className() -> String {
+        return ""
+    }
+}
 extension Int: RealmOptionalType {}
 extension Int8: RealmOptionalType {}
 extension Int16: RealmOptionalType {}
@@ -37,14 +44,14 @@ extension Bool: RealmOptionalType {}
 }
 
 /**
- A `RealmOptional` instance represents an optional value for types that can't be directly declared as `dynamic` in Swift,
- such as `Int`, `Float`, `Double`, and `Bool`.
+ A `RealmOptional` instance represents an optional value for types that can't be
+ directly declared as `@objc` in Swift, such as `Int`, `Float`, `Double`, and `Bool`.
 
  To change the underlying value stored by a `RealmOptional` instance, mutate the instance's `value` property.
  */
-public final class RealmOptional<T: RealmOptionalType>: RLMOptionalBase, HasPropertyType {
+public final class RealmOptional<Value: RealmOptionalType>: RLMOptionalBase, HasPropertyType {
     /// The value the optional represents.
-    public var value: T? {
+    public var value: Value? {
         get {
             return underlyingValue.map(dynamicBridgeCast)
         }
@@ -58,13 +65,13 @@ public final class RealmOptional<T: RealmOptionalType>: RLMOptionalBase, HasProp
 
      - parameter value: The value to store in the optional, or `nil` if not specified.
      */
-    public init(_ value: T? = nil) {
+    public init(_ value: Value? = nil) {
         super.init()
         self.value = value
     }
 
     internal var propType: PropertyType {
-        return T.propType()
+        return Value.propType()
     }
 
 }

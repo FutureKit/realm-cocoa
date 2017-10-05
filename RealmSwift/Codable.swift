@@ -22,8 +22,10 @@ import Foundation
 
 // swiftlint:disable line_length identifier_name
 // stolen functions from the Swift stdlib
-// https://github.com/apple/swift/blob/2e5817ebe15b8c2fc2459e08c1d462053cbb9a99/stdlib/public/core/Codable.swift
+// https://github.com/apple/swift/blob/a24998a5b12151e8acfbe5f1f70dcf80685334b1/stdlib/public/core/Codable.swift
 //
+@_inlineable
+@_versioned
 internal func assertTypeIsEncodable<T>(_ type: T.Type, in wrappingType: Any.Type) {
     guard T.self is Encodable.Type else {
         if T.self == Encodable.self || T.self == Codable.self {
@@ -34,6 +36,8 @@ internal func assertTypeIsEncodable<T>(_ type: T.Type, in wrappingType: Any.Type
     }
 }
 
+@_inlineable
+@_versioned
 internal func assertTypeIsDecodable<T>(_ type: T.Type, in wrappingType: Any.Type) {
     guard T.self is Decodable.Type else {
         if T.self == Decodable.self || T.self == Codable.self {
@@ -45,22 +49,35 @@ internal func assertTypeIsDecodable<T>(_ type: T.Type, in wrappingType: Any.Type
 }
 
 extension Encodable {
-    fileprivate func __encode(to container: inout SingleValueEncodingContainer) throws { try container.encode(self) }
-    fileprivate func __encode(to container: inout UnkeyedEncodingContainer)     throws { try container.encode(self) }
-    fileprivate func __encode<Key>(to container: inout KeyedEncodingContainer<Key>, forKey key: Key) throws { try container.encode(self, forKey: key) }
+    @_inlineable
+    @_versioned
+    internal func __encode(to container: inout SingleValueEncodingContainer) throws { try container.encode(self) }
+    @_inlineable
+    @_versioned
+    internal func __encode(to container: inout UnkeyedEncodingContainer)     throws { try container.encode(self) }
+    @_inlineable
+    @_versioned
+    internal func __encode<Key>(to container: inout KeyedEncodingContainer<Key>, forKey key: Key) throws { try container.encode(self, forKey: key) }
 }
 
 extension Decodable {
     // Since we cannot call these __init, we'll give the parameter a '__'.
-    fileprivate init(__from container: SingleValueDecodingContainer)   throws { self = try container.decode(Self.self) }
-    fileprivate init(__from container: inout UnkeyedDecodingContainer) throws { self = try container.decode(Self.self) }
-    fileprivate init<Key>(__from container: KeyedDecodingContainer<Key>, forKey key: Key) throws { self = try container.decode(Self.self, forKey: key) }
+    @_inlineable
+    @_versioned
+    internal init(__from container: SingleValueDecodingContainer)   throws { self = try container.decode(Self.self) }
+    @_inlineable
+    @_versioned
+    internal init(__from container: inout UnkeyedDecodingContainer) throws { self = try container.decode(Self.self) }
+    @_inlineable
+    @_versioned
+    internal init<Key>(__from container: KeyedDecodingContainer<Key>, forKey key: Key) throws { self = try container.decode(Self.self, forKey: key) }
 }
 
 
 extension RealmOptional : Encodable /* where Wrapped : Encodable */ {
+    @_inlineable
     public func encode(to encoder: Encoder) throws {
-        assertTypeIsEncodable(T.self, in: type(of: self))
+        assertTypeIsEncodable(Value.self, in: type(of: self))
 
         var container = encoder.singleValueContainer()
         if let v = self.value {
@@ -72,26 +89,28 @@ extension RealmOptional : Encodable /* where Wrapped : Encodable */ {
 }
 
 extension RealmOptional : Decodable /* where Wrapped : Decodable */ {
+    @_inlineable // FIXME(sil-serialize-all)
     public convenience init(from decoder: Decoder) throws {
         // Initialize self here so we can get type(of: self).
         self.init()
-        assertTypeIsDecodable(T.self, in: type(of: self))
+        assertTypeIsDecodable(Value.self, in: type(of: self))
 
         let container = try decoder.singleValueContainer()
         if !container.decodeNil() {
-            let metaType = (T.self as! Decodable.Type) // swiftlint:disable:this force_cast
+            let metaType = (Value.self as! Decodable.Type) // swiftlint:disable:this force_cast
             let element = try metaType.init(from: decoder)
-            self.value = (element as! T)  // swiftlint:disable:this force_cast
+            self.value = (element as! Value)  // swiftlint:disable:this force_cast
         }
     }
 }
 extension List : Decodable /* where Element : Decodable */ {
+    @_inlineable // FIXME(sil-serialize-all)
     public convenience init(from decoder: Decoder) throws {
         // Initialize self here so we can get type(of: self).
         self.init()
-        assertTypeIsDecodable(T.self, in: type(of: self))
+        assertTypeIsDecodable(Element.self, in: type(of: self))
 
-        let metaType = (T.self as! Decodable.Type) // swiftlint:disable:this force_cast
+        let metaType = (Element.self as! Decodable.Type) // swiftlint:disable:this force_cast
 
         var container = try decoder.unkeyedContainer()
         while !container.isAtEnd {
@@ -102,8 +121,9 @@ extension List : Decodable /* where Element : Decodable */ {
 }
 
 extension List : Encodable /* where Element : Decodable */ {
+    @_inlineable // FIXME(sil-serialize-all)
     public func encode(to encoder: Encoder) throws {
-        assertTypeIsEncodable(T.self, in: type(of: self))
+        assertTypeIsEncodable(Element.self, in: type(of: self))
 
         var container = encoder.unkeyedContainer()
         for element in self {

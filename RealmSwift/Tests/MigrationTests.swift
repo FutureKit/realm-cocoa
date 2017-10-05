@@ -19,7 +19,6 @@
 import XCTest
 import RealmSwift
 import Realm
-import Realm.Private
 import Realm.Dynamic
 import Foundation
 
@@ -117,8 +116,16 @@ class MigrationTests: TestCase {
         _ = try! Realm()
         XCTAssertEqual(0, try! schemaVersionAtURL(defaultRealmURL()),
                        "Initial version should be 0")
-        assertFails(.fail) {
-            try schemaVersionAtURL(URL(fileURLWithPath: "/dev/null"))
+
+        do {
+            _ = try schemaVersionAtURL(URL(fileURLWithPath: "/dev/null"))
+            XCTFail("Expected .filePermissionDenied or .fileAccess, but no error was raised")
+        } catch Realm.Error.filePermissionDenied {
+            // Success!
+        } catch Realm.Error.fileAccess {
+            // Success!
+        } catch {
+            XCTFail("Expected .filePermissionDenied or .fileAccess, got \(error)")
         }
     }
 
