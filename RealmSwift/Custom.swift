@@ -72,8 +72,8 @@ extension RawRepresentable where RawValue: RealmBackingStorageType {
     public func toRealmBackableStorage() -> RawValue? {
         return self.rawValue
     }
-    public static func fromRealmBackableStorage(storage: RawValue) throws -> Self? {
-        return Self(rawValue:storage)
+    public init?(fromRealmBackableStorage: RawValue) {
+        self.init(rawValue: fromRealmBackableStorage)
     }
 }
 
