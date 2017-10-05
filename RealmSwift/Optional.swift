@@ -123,11 +123,6 @@ extension Object: RealmOptionalType {
     }
 }
 
-@objc internal protocol HasPropertyType: class {
-    var propType: PropertyType { get }
-}
-
-
 public protocol RealmOptionalProtocol {
     static var propType: PropertyType { get }
 }
