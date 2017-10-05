@@ -206,9 +206,9 @@ class ObjectSchemaInitializationTests: TestCase {
         XCTAssertTrue(schema["optDateCol"]!.isOptional)
     }
 
-    func testNonRealmOptionalTypesDeclaredAsRealmOptional() {
-        assertThrows(RLMObjectSchema(forObjectClass: SwiftObjectWithNonRealmOptionalType.self))
-    }
+//    func testNonRealmOptionalTypesDeclaredAsRealmOptional() {
+//        assertThrows(RLMObjectSchema(forObjectClass: SwiftObjectWithNonRealmOptionalType.self))
+//    }
 
     func testNotExplicitlyIgnoredComputedProperties() {
         let schema = SwiftComputedPropertyNotIgnoredObject().objectSchema
@@ -299,11 +299,11 @@ class SwiftObjectWithNonOptionalLinkProperty: SwiftFakeObject {
     @objc dynamic var objectCol = SwiftBoolObject()
 }
 
-extension Set: RealmOptionalType { }
-
-class SwiftObjectWithNonRealmOptionalType: SwiftFakeObject {
-    let set = RealmOptional<Set<Int>>()
-}
+//extension Set: RealmOptionalType { }
+//
+//class SwiftObjectWithNonRealmOptionalType: SwiftFakeObject {
+//    let set = RealmOptional<Set<Int>>()
+//}
 
 class SwiftObjectWithBadPropertyName: SwiftFakeObject {
     @objc dynamic var newValue = false

@@ -476,27 +476,11 @@ public class ObjectUtil: NSObject {
         }
         let mirror = Mirror(reflecting: child.value)
         let type = mirror.subjectType
+
         let code: PropertyType
-        if type is Optional<String>.Type || type is Optional<NSString>.Type {
-            code = .string
-        } else if type is Optional<Date>.Type {
-            code = .date
-        } else if type is Optional<Data>.Type {
-            code = .data
-        } else if type is Optional<Object>.Type {
-            code = .object
-        } else if type is RealmOptional<Int>.Type ||
-            type is RealmOptional<Int8>.Type ||
-            type is RealmOptional<Int16>.Type ||
-            type is RealmOptional<Int32>.Type ||
-            type is RealmOptional<Int64>.Type {
-            code = .int
-        } else if type is RealmOptional<Float>.Type {
-            code = .float
-        } else if type is RealmOptional<Double>.Type {
-            code = .double
-        } else if type is RealmOptional<Bool>.Type {
-            code = .bool
+
+        if let propType = type as? RealmOptionalProtocol.Type {
+            code = propType.propType
         } else if child.value is RLMOptionalBase {
             throwRealmException("'\(type)' is not a valid RealmOptional type.")
             code = .int // ignored

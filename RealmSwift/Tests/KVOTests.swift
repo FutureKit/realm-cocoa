@@ -49,6 +49,12 @@ class KVOObject: Object {
     @objc dynamic var optBinaryCol: Data?
     @objc dynamic var optDateCol: Date?
 
+#if swift(>=4)
+    var customUrlCol = RealmCustom<URL>()
+#else
+    var customUrlCol: String?
+#endif
+
     let arrayBool = List<Bool>()
     let arrayInt8 = List<Int8>()
     let arrayInt16 = List<Int16>()
@@ -129,6 +135,7 @@ class KVOTests: TestCase {
         case "optStringCol": observation = observe(\.optStringCol)
         case "optBinaryCol": observation = observe(\.optBinaryCol)
         case "optDateCol":   observation = observe(\.optDateCol)
+        case "customUrlCol":   observation = observe(\.customUrlCol)
         case "invalidated":  observation = observe(\.invalidated)
         default:
             // some properties don't support Swift Smart KeyPaths, fall back to legacy KVO API
@@ -224,6 +231,11 @@ class KVOTests: TestCase {
         observeChange(obs, "optStringCol", nil, "abc") { obj.optStringCol = "abc" }
         observeChange(obs, "optBinaryCol", nil, data) { obj.optBinaryCol = data }
         observeChange(obs, "optDateCol", nil, date) { obj.optDateCol = date }
+#if swift(>=4)
+        let url = URL(string:"https://realm.io")
+        observeChange(obs, "customUrlOpt", nil, url.absoluteString()) { obj.customUrlCol.value = url }
+        observeChange(obs, "customUrlOpt", url.absoluteString(), nil) { obj.customUrlCol.value = nil }
+#endif
 
         observeChange(obs, "optIntCol", 10, nil) { obj.optIntCol.value = nil }
         observeChange(obs, "optFloatCol", 10.0, nil) { obj.optFloatCol.value = nil }
