@@ -18,10 +18,16 @@
 
 import Realm
 
-/// A protocol describing types that can parameterize a `RealmOptional`.
-public protocol RealmOptionalType {
-    static func propType() -> PropertyType
+// this defines Swift types that can be used inside Realm as storage.
+// each maps to a PropertyType
+public protocol RealmBackingStorageType {
+    static var propType: PropertyType { get }
+
 }
+
+/// A protocol describing types that can parameterize a `RealmOptional`.
+public protocol RealmOptionalType: RealmBackingStorageType {}
+
 
 public extension RealmOptionalType {
     /// :nodoc:
@@ -29,18 +35,101 @@ public extension RealmOptionalType {
         return ""
     }
 }
-extension Int: RealmOptionalType {}
-extension Int8: RealmOptionalType {}
-extension Int16: RealmOptionalType {}
-extension Int32: RealmOptionalType {}
-extension Int64: RealmOptionalType {}
-extension Float: RealmOptionalType {}
-extension Double: RealmOptionalType {}
-extension Bool: RealmOptionalType {}
 
+extension Int: RealmOptionalType {
+    public static var propType: PropertyType {
+        return .int
+    }
+}
+extension Int8: RealmOptionalType {
+    public static var propType: PropertyType {
+        return .int
+    }
+}
+extension Int16: RealmOptionalType {
+    public static var propType: PropertyType {
+        return .int
+    }
+}
+extension Int32: RealmOptionalType {
+    public static var propType: PropertyType {
+        return .int
+    }
+}
+extension Int64: RealmOptionalType {
+    public static var propType: PropertyType {
+        return .int
+    }
+}
+extension Float: RealmOptionalType {
+    public static var propType: PropertyType {
+        return .float
+    }
+}
+extension Double: RealmOptionalType {
+    public static var propType: PropertyType {
+        return .double
+    }
+}
+
+extension Bool: RealmOptionalType {
+    public static var propType: PropertyType {
+        return .bool
+    }
+}
+
+extension Date: RealmBackingStorageType {
+    public static var propType: PropertyType {
+        return .date
+    }
+}
+
+extension NSDate: RealmBackingStorageType {
+    public static var propType: PropertyType {
+        return .date
+    }
+}
+
+extension NSData: RealmBackingStorageType {
+    public static var propType: PropertyType {
+        return .data
+    }
+}
+
+extension Data: RealmBackingStorageType {
+    public static var propType: PropertyType {
+        return .data
+    }
+}
+
+
+
+extension String: RealmBackingStorageType {
+    public static var propType: PropertyType {
+        return .string
+    }
+}
+
+extension NSString: RealmBackingStorageType {
+    public static var propType: PropertyType {
+        return .string
+    }
+}
+
+
+extension Object: RealmOptionalType {
+    public static var propType: PropertyType {
+        return .object
+    }
+}
 
 @objc internal protocol HasPropertyType: class {
     var propType: PropertyType { get }
+}
+
+
+public protocol RealmOptionalProtocol {
+    static var propType: PropertyType { get }
 }
 
 /**
@@ -49,7 +138,7 @@ extension Bool: RealmOptionalType {}
 
  To change the underlying value stored by a `RealmOptional` instance, mutate the instance's `value` property.
  */
-public final class RealmOptional<Value: RealmOptionalType>: RLMOptionalBase, HasPropertyType {
+public final class RealmOptional<Value: RealmOptionalType>: RLMOptionalBase, RealmOptionalProtocol {
     /// The value the optional represents.
     public var value: Value? {
         get {
@@ -70,8 +159,7 @@ public final class RealmOptional<Value: RealmOptionalType>: RLMOptionalBase, Has
         self.value = value
     }
 
-    internal var propType: PropertyType {
-        return Value.propType()
+    public static var propType: PropertyType {
+        return Value.propType
     }
-
 }
