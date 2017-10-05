@@ -75,6 +75,8 @@ class SwiftOptionalObject: Object {
     let optFloatCol = RealmOptional<Float>()
     let optDoubleCol = RealmOptional<Double>()
     let optBoolCol = RealmOptional<Bool>()
+    let customUrlCol = RealmCustom<URL>()
+    let customTypeCol = RealmCustom<CustomType>()
     @objc dynamic var optObjectCol: SwiftBoolObject?
 }
 
@@ -129,6 +131,8 @@ class SwiftOptionalDefaultValuesObject: Object {
     let optFloatCol = RealmOptional<Float>(2.2)
     let optDoubleCol = RealmOptional<Double>(3.3)
     let optBoolCol = RealmOptional<Bool>(true)
+    let optCustomCol = RealmCustom<URL>(URL(string:"https://optCustomCol.com")!)
+
     @objc dynamic var optObjectCol: SwiftBoolObject? = SwiftBoolObject(value: [true])
     //    let arrayCol = List<SwiftBoolObject?>()
 
@@ -145,7 +149,8 @@ class SwiftOptionalDefaultValuesObject: Object {
             "optInt64Col": 1,
             "optFloatCol": 2.2 as Float,
             "optDoubleCol": 3.3,
-            "optBoolCol": true
+            "optBoolCol": true,
+            "optCustomCol": URL(string:"https://optCustomCol.com")!
         ]
     }
 }

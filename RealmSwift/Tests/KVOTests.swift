@@ -25,6 +25,28 @@ func nextPrimaryKey() -> Int {
     return pkCounter
 }
 
+struct CustomType {
+    var data: String
+}
+
+extension CustomType: Equatable {
+
+    static func ==(lhs: CustomType, rhs: CustomType) -> Bool {
+        return lhs.data == rhs.data
+    }
+}
+
+extension CustomType: RealmBackable {
+    typealias BackableStorageType = String
+    func toRealmBackableStorage() -> String? {
+        return self.data
+    }
+
+    init?(fromRealmBackableStorage: BackableStorageType) {
+        self.init(data:fromRealmBackableStorage)
+    }
+}
+
 class KVOObject: Object {
     @objc dynamic var pk = nextPrimaryKey() // primary key for equality
     @objc dynamic var ignored: Int = 0
@@ -40,6 +62,7 @@ class KVOObject: Object {
     @objc dynamic var binaryCol: Data = Data()
     @objc dynamic var dateCol: Date = Date(timeIntervalSince1970: 0)
     @objc dynamic var objectCol: KVOObject?
+
     let arrayCol = List<KVOObject>()
     let optIntCol = RealmOptional<Int>()
     let optFloatCol = RealmOptional<Float>()
@@ -48,6 +71,9 @@ class KVOObject: Object {
     @objc dynamic var optStringCol: String?
     @objc dynamic var optBinaryCol: Data?
     @objc dynamic var optDateCol: Date?
+
+    let customUrlCol = RealmCustom<URL>()
+    let customTypeCol = RealmCustom<CustomType>()
 
     let arrayBool = List<Bool>()
     let arrayInt8 = List<Int8>()
@@ -98,6 +124,14 @@ class KVOTests: TestCase {
                                change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         changeDictionary = change
     }
+
+    func observeCustomChange<T: RealmBackable>(_ obj: KVOObject, _ key: String, _ old: T?, _ new: T?,
+    fileName: StaticString = #file, lineNumber: UInt = #line, _ block: () -> Void)  {
+        let old = try! old?.toRealmBackableStorage()
+        let new = try! new?.toRealmBackableStorage()
+        return self.observeChange(obj,key,old,new,fileName: fileName,lineNumber:lineNumber,block)
+    }
+
 
     // swiftlint:disable:next cyclomatic_complexity
     func observeChange<T: Equatable>(_ obj: KVOObject, _ key: String, _ old: T?, _ new: T?,
@@ -224,6 +258,14 @@ class KVOTests: TestCase {
         observeChange(obs, "optStringCol", nil, "abc") { obj.optStringCol = "abc" }
         observeChange(obs, "optBinaryCol", nil, data) { obj.optBinaryCol = data }
         observeChange(obs, "optDateCol", nil, date) { obj.optDateCol = date }
+
+        let url = URL(string:"https://realm.io")!
+        observeCustomChange(obs, "customUrlCol", nil, url) { obj.customUrlCol.value = url }
+        observeCustomChange(obs, "customUrlCol", url, nil) { obj.customUrlCol.value = nil }
+
+        let custom = CustomType(data: "customData")
+        observeCustomChange(obs, "customTypeCol", nil, custom) { obj.customTypeCol.value = custom }
+        observeCustomChange(obs, "customTypeCol", custom, nil) { obj.customTypeCol.value = nil }
 
         observeChange(obs, "optIntCol", 10, nil) { obj.optIntCol.value = nil }
         observeChange(obs, "optFloatCol", 10.0, nil) { obj.optFloatCol.value = nil }
