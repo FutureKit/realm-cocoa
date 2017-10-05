@@ -224,6 +224,8 @@ class MigrationTests: TestCase {
                 soo.optFloatCol.value = 6.1
                 soo.optDoubleCol.value = 7.2
                 soo.optBoolCol.value = true
+                soo.customUrlCol.value = URL(string:"https://customUrlCol.com")
+                soo.customTypeCol.value = CustomType(data: "customTypeCol")
                 try! Realm().add(soo)
             }
         }
@@ -256,6 +258,10 @@ class MigrationTests: TestCase {
                 XCTAssertTrue(newObject!["optDoubleCol"]! is Double)
                 XCTAssertTrue(oldObject!["optBoolCol"]! is Bool)
                 XCTAssertTrue(newObject!["optBoolCol"]! is Bool)
+                XCTAssertTrue(oldObject!["customUrlCol"]! is String)
+                XCTAssertTrue(newObject!["customUrlCol"]! is String)
+                XCTAssertTrue(oldObject!["customTypeCol"]! is String)
+                XCTAssertTrue(newObject!["customTypeCol"]! is String)
             }
         }
     }

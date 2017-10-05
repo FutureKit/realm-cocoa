@@ -223,6 +223,13 @@ class ObjectAccessorTests: TestCase {
 
             self.assertThrows(obj.optIntCol.value = 1)
             self.assertThrows(obj.optIntCol.value = nil)
+
+            self.assertThrows(copy.customUrlCol.value = URL(string:"https://customUrl.com"))
+            self.assertThrows(copy.customUrlCol.value = nil)
+
+            self.assertThrows(obj.customUrlCol.value = URL(string:"https://customUrl.com"))
+            self.assertThrows(obj.customUrlCol.value = nil)
+
         }
     }
 
@@ -328,5 +335,21 @@ class ObjectAccessorTests: TestCase {
         XCTAssertEqual(object.optObjectCol!.boolCol, true)
         object.optObjectCol = nil
         XCTAssertNil(object.optObjectCol)
+
+        object.customUrlCol.value = URL(string: "https://customUrlCol.com")
+        XCTAssertEqual(object.customUrlCol.value!, URL(string: "https://customUrlCol.com"))
+        object.customUrlCol.value = URL(string: "https://customUrlCol2.com")
+        XCTAssertEqual(object.customUrlCol.value!, URL(string: "https://customUrlCol2.com"))
+        object.customUrlCol.value = nil
+        XCTAssertNil(object.customUrlCol.value)
+
+        object.customTypeCol.value = CustomType(data: "CustomType")
+        XCTAssertEqual(object.customTypeCol.value!, CustomType(data: "CustomType"))
+        object.customTypeCol.value = CustomType(data: "CustomType2")
+        XCTAssertEqual(object.customTypeCol.value!, CustomType(data: "CustomType2"))
+        object.customTypeCol.value = nil
+        XCTAssertNil(object.customTypeCol.value)
+
+
     }
 }

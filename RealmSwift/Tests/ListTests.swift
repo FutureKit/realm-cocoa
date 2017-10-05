@@ -497,6 +497,8 @@ class ListTests: TestCase {
                     object.optDoubleCol.value = Double(value)
                     object.optStringCol = String(value)
                     object.optNSStringCol = NSString(format: "%d", value)
+                    object.customTypeCol.value = CustomType(data: String(value))
+                    object.customUrlCol.value = URL(string:"https://realm.io/\(value)")
                     listObject.array.append(object)
                     realm.add(listObject)
                 }
@@ -580,7 +582,14 @@ class ListTests: TestCase {
                 XCTAssertEqual(properties, kvcProperties)
             }
 #if swift(>=4)
-            // this test crashes xcode 9 beta 1's compiler
+            do {
+                let objects = realm.objects(SwiftOptionalObject.self)
+
+                let properties = Array(objects.flatMap { $0.optStringCol })
+                let kvcProperties = objects.value(forKeyPath: "optStringCol") as! [String]
+
+                XCTAssertEqual(properties, kvcProperties)
+    }
 #else
             do {
                 let objects = realm.objects(SwiftOptionalObject.self)
@@ -598,6 +607,22 @@ class ListTests: TestCase {
                 let properties = Array(objects.flatMap { $0.optNSStringCol })
                 let listsOfObjects = objects.value(forKeyPath: "optNSStringCol") as! [NSString]
                 let kvcProperties = Array(listsOfObjects.flatMap { $0 })
+
+                XCTAssertEqual(properties, kvcProperties)
+            }
+            do {
+                let objects = realm.objects(SwiftOptionalObject.self)
+
+                let properties = Array(objects.flatMap {  $0.customUrlCol.value?.toRealmBackableStorage() })
+                let kvcProperties = objects.value(forKeyPath: "customUrlCol") as! [String]
+
+                XCTAssertEqual(properties, kvcProperties)
+            }
+            do {
+                let objects = realm.objects(SwiftOptionalObject.self)
+
+                let properties = Array(objects.flatMap {  $0.customTypeCol.value?.toRealmBackableStorage() })
+                let kvcProperties = objects.value(forKeyPath: "customTypeCol") as! [String]
 
                 XCTAssertEqual(properties, kvcProperties)
             }
