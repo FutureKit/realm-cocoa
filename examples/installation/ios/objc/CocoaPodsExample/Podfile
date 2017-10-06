@@ -2,11 +2,12 @@
 # platform :ios, '6.0'
 
 branch = ENV['sha']
+repo = defined?(ENV['repo']) ? ENV['repo'] : 'git@github.com:realm/realm-cocoa.git'
 
 target 'CocoaPodsExample' do
-  pod 'Realm', git: 'git@github.com:realm/realm-cocoa.git', branch: branch, submodules: true
+  pod 'Realm', git: repo, branch: branch, submodules: true
 end
 
 target 'CocoaPodsExampleTests' do
-  pod 'Realm/Headers', git: 'git@github.com:realm/realm-cocoa.git', branch: branch, submodules: true
+  pod 'Realm/Headers', git: repo, branch: branch, submodules: true
 end
