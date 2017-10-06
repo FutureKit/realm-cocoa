@@ -20,7 +20,7 @@ import Realm
 
 // this defines Swift types that can be used inside Realm as storage.
 // each maps to a PropertyType
-public protocol RealmBackingStorageType {
+public protocol RealmBackingStorageType : Equatable {
     static var propType: PropertyType { get }
 
 }

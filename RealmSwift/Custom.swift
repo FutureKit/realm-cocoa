@@ -19,11 +19,18 @@
 import Realm
 
 
-public protocol RealmBackable {
+public protocol RealmBackable  {
     associatedtype BackableStorageType: RealmBackingStorageType
 
-    func toRealmBackableStorage() throws -> BackableStorageType?
-    static func fromRealmBackableStorage(storage: BackableStorageType) throws -> Self?
+    func toRealmBackableStorage() -> BackableStorageType?
+
+    init?(fromRealmBackableStorage: BackableStorageType)
+}
+
+extension RealmBackable {
+    public static var propType: PropertyType {
+        return BackableStorageType.propType
+    }
 }
 
 public final class RealmCustom<Value: RealmBackable> : RLMOptionalBase, RealmOptionalProtocol {
@@ -34,11 +41,11 @@ public final class RealmCustom<Value: RealmBackable> : RLMOptionalBase, RealmOpt
                 return nil
             }
             // swiftlint:disable:next force_try
-            return try! Value.fromRealmBackableStorage(storage:storage)
+            return Value(fromRealmBackableStorage:storage)
         }
         set {
             // swiftlint:disable:next force_try
-            underlyingValue = try! newValue?.toRealmBackableStorage()
+            underlyingValue = newValue?.toRealmBackableStorage()
         }
     }
 
@@ -62,7 +69,7 @@ public final class RealmCustom<Value: RealmBackable> : RLMOptionalBase, RealmOpt
 extension RawRepresentable where RawValue: RealmBackingStorageType {
     public typealias BackableStorageType = RawValue
 
-    public func toRealmBackableStorage() throws -> RawValue? {
+    public func toRealmBackableStorage() -> RawValue? {
         return self.rawValue
     }
     public static func fromRealmBackableStorage(storage: RawValue) throws -> Self? {
@@ -103,12 +110,13 @@ extension RealmCustom : Decodable /* where Wrapped : Decodable */ {
 extension URL: RealmBackable {
     public typealias BackableStorageType = String
 
-    public func toRealmBackableStorage() throws -> String? {
+    public func toRealmBackableStorage() -> String? {
         return self.absoluteString
     }
 
-    public static func fromRealmBackableStorage(storage: String) throws -> URL? {
-        return URL(string: storage)
+    public init?(fromRealmBackableStorage: String) {
+        self.init(string: fromRealmBackableStorage)
     }
 }
+
 
