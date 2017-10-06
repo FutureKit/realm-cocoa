@@ -748,6 +748,7 @@ case "$COMMAND" in
           # Verify the current branch, unless one was already specified in the sha environment variable.
           if [[ -z $sha ]]; then
             export sha=$(git rev-parse --abbrev-ref HEAD)
+            export repo=$(git remote get-url origin)
           fi
 
           if [[ $(git log -1 @{push}..) != "" ]] || ! git diff-index --quiet HEAD; then
