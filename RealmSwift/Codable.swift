@@ -135,10 +135,25 @@ extension List : DecodableWithDefault /* where Element : Decodable */ {
 
         let metaType = (Element.self as! Decodable.Type) // swiftlint:disable:this force_cast
 
-        var container = try decoder.unkeyedContainer()
-        while !container.isAtEnd {
-            let element = try metaType.init(__from: &container)
-            self.append(element as! Element) // swiftlint:disable:this force_cast
+        do {
+            var container = try decoder.unkeyedContainer()
+            while !container.isAtEnd {
+                let element = try metaType.init(__from: &container)
+                self.append(element as! Element) // swiftlint:disable:this force_cast
+            }
+        }
+        catch {
+            let outerError = error
+            NSLog("error = \(error)")
+            do {
+                let container = try decoder.singleValueContainer()
+                if !container.decodeNil() {
+                    throw outerError
+                }
+            }
+            catch {
+                throw outerError
+            }
         }
     }
 }
