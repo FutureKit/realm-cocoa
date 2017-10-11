@@ -73,6 +73,20 @@ extension Decodable {
     internal init<Key>(__from container: KeyedDecodingContainer<Key>, forKey key: Key) throws { self = try container.decode(Self.self, forKey: key) }
 }
 
+public protocol DecodableWithDefault: Decodable {
+    static func defaultDecodableValue() -> Self
+}
+
+
+extension KeyedDecodingContainerProtocol {
+    public func decode<T>(_ type: T.Type, forKey key: Self.Key) throws -> T where T: DecodableWithDefault {
+        if let t = try self.decodeIfPresent(T.self, forKey: key) {
+            return t
+        }
+        return T.defaultDecodableValue()
+    }
+}
+
 
 extension RealmOptional : Encodable /* where Wrapped : Encodable */ {
     @_inlineable
@@ -88,7 +102,12 @@ extension RealmOptional : Encodable /* where Wrapped : Encodable */ {
     }
 }
 
-extension RealmOptional : Decodable /* where Wrapped : Decodable */ {
+extension RealmOptional : DecodableWithDefault /* where Wrapped : Decodable */ {
+    public static func defaultDecodableValue() -> RealmOptional<Value> {
+        return RealmOptional<Value>(nil)
+    }
+
+
     @_inlineable // FIXME(sil-serialize-all)
     public convenience init(from decoder: Decoder) throws {
         // Initialize self here so we can get type(of: self).
@@ -103,8 +122,12 @@ extension RealmOptional : Decodable /* where Wrapped : Decodable */ {
         }
     }
 }
-extension List : Decodable /* where Element : Decodable */ {
-    @_inlineable // FIXME(sil-serialize-all)
+extension List : DecodableWithDefault /* where Element : Decodable */ {
+    public static func defaultDecodableValue() -> List<Element> {
+        return List<Element>()
+    }
+
+   @_inlineable // FIXME(sil-serialize-all)
     public convenience init(from decoder: Decoder) throws {
         // Initialize self here so we can get type(of: self).
         self.init()
@@ -120,7 +143,8 @@ extension List : Decodable /* where Element : Decodable */ {
     }
 }
 
-extension List : Encodable /* where Element : Decodable */ {
+extension List: Encodable /* where Element : Decodable */ {
+
     @_inlineable // FIXME(sil-serialize-all)
     public func encode(to encoder: Encoder) throws {
         assertTypeIsEncodable(Element.self, in: type(of: self))

@@ -91,7 +91,11 @@ extension RealmCustom : Encodable /* where Wrapped : Encodable */ {
     }
 }
 
-extension RealmCustom : Decodable /* where Wrapped : Decodable */ {
+extension RealmCustom : DecodableWithDefault /* where Wrapped : Decodable */ {
+    public static func defaultDecodableValue() -> RealmCustom<Value> {
+        return RealmCustom<Value>()
+    }
+
     public convenience init(from decoder: Decoder) throws {
         // Initialize self here so we can get type(of: self).
         self.init()
