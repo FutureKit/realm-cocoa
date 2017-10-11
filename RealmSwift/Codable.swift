@@ -142,17 +142,15 @@ extension List : DecodableWithDefault /* where Element : Decodable */ {
                 self.append(element as! Element) // swiftlint:disable:this force_cast
             }
         }
-        catch {
-            let outerError = error
-            NSLog("error = \(error)")
+        catch DecodingError.valueNotFound(let type, let context) {
             do {
                 let container = try decoder.singleValueContainer()
                 if !container.decodeNil() {
-                    throw outerError
+                    throw DecodingError.valueNotFound(type, context)
                 }
             }
             catch {
-                throw outerError
+                throw DecodingError.valueNotFound(type, context)
             }
         }
     }
