@@ -1,3 +1,26 @@
+3.0.0-rc.2 Release notes (2017-10-14)
+=============================================================
+
+### Enhancements
+* Reinstate `RLMSyncPermissionSortPropertyUserID` to allow users to sort permissions
+  to their own Realms they've granted to others.
+
+### Bugfixes
+* `-[RLMResults<RLMSyncPermission *> indexOfObject:]` now properly accounts for access
+  level.
+* Fix a race condition that could lead to a crash accessing to the freed configuration object
+  if a default configuration was set from a different thread.
+* Fixed an issue that crash when enumerating after clearing data during migration.
+* Fix a bug where a synced Realm couldn't be reopened even after a successful client reset
+  in some cases.
+* Fix a bug where the sync subsystem waited too long in certain cases to reconnect to the server.
+* Fix a bug where encrypted sync-related metadata was incorrectly deleted from upgrading users,
+  resulting in all users being logged out.
+* Fix a bug where permission-related data continued to be synced to a client even after the user
+  that data belonged to logged out.
+* Fix an issue where collection notifications might be delivered inconsistently if a notification
+  callback was added within another callback for the same collection.
+
 3.0.0-rc.1 Release notes (2017-10-03)
 =============================================================
 
