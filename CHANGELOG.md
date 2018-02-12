@@ -1,3 +1,13 @@
+3.1.1 Release notes (2018-02-03)
+=============================================================
+
+Prebuilt Swift frameworks for Carthage are now built with Xcode 9.2.
+
+### Bugfixes
+
+* Fix a memory leak when opening Realms with an explicit `objectTypes` array
+  from Swift.
+
 3.1.0 Release notes (2018-01-16)
 =============================================================
 
